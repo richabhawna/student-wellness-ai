@@ -11,7 +11,7 @@ import os
 
 st.set_page_config(
     page_title="Student Wellness AI",
-    page_icon="🧠",
+    page_icon=None,
     layout="wide"
 )
 
@@ -39,7 +39,7 @@ except Exception as e:
 # HEADER
 # ----------------------------------
 
-st.title("🧠 Student Wellness AI")
+st.title("Student Wellness AI")
 
 st.subheader(
     "Experimental wearable-based stress estimation"
@@ -65,7 +65,7 @@ st.divider()
 # INPUT SECTION
 # ----------------------------------
 
-st.header("⌚ Enter wearable measurements")
+st.header("Enter wearable measurements")
 
 st.caption(
     "Enter daily measurements. The example values are for "
@@ -158,6 +158,7 @@ if st.button(
         prediction = float(model.predict(input_data)[0])
 
         st.session_state["prediction"] = prediction
+        st.session_state["input_data"] = input_data
 
         st.success("Prediction generated successfully!")
 
@@ -172,7 +173,7 @@ if "prediction" in st.session_state:
 
     prediction = st.session_state["prediction"]
 
-    st.header("📊 Prediction Result")
+    st.header("Prediction Result")
 
     st.metric(
         label="Estimated self-reported stress score",
@@ -196,15 +197,7 @@ if "prediction" in st.session_state:
     st.subheader("Your wearable inputs")
 
     st.dataframe(
-        input_data if "input_data" in locals()
-        else pd.DataFrame([{
-            "Daily steps": daily_steps,
-            "HRV RMSSD": hrv_rmssd_mean,
-            "Oxygen": oxygen_mean,
-            "Sleep score": overall_score,
-            "Deep sleep minutes": deep_sleep_in_minutes,
-            "Active interval fraction": active_interval_fraction
-        }]),
+        st.session_state["input_data"],
         use_container_width=True,
         hide_index=True
     )
